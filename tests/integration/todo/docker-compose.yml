@@ -1,0 +1,57 @@
+# Two-shard Todo integration topology for datorium-client-py.
+# server1 owns 00-7F; server2 owns 80-FF. Both are dual-role SOT+read.
+#
+# Driven by ../../../../start_integration_test.sh — do not leave running.
+
+x-bootstrap-server: &bootstrap-server
+  build:
+    context: ${DATORIUMDB_SRC}
+    dockerfile: Dockerfile
+  image: datoriumdb:local
+  environment:
+    DATORIUMDB_MACHINE_BOOTSTRAP_SECRET_FILE: /run/secrets/bootstrap_secret
+  secrets:
+    - bootstrap_secret
+  healthcheck:
+    test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:8080/datoriumdb/v1/health"]
+    interval: 5s
+    timeout: 3s
+    retries: 12
+    start_period: 15s
+
+services:
+  server1:
+    <<: *bootstrap-server
+    command: ["server1", "http://server1:8080", "--listen", "0.0.0.0:8080"]
+    environment:
+      DATORIUMDB_MACHINE_BOOTSTRAP_SECRET_FILE: /run/secrets/bootstrap_secret
+      DATORIUMDB_SIGNING_KEY_FILE: /run/secrets/signing_key
+    secrets:
+      - bootstrap_secret
+      - signing_key
+    volumes:
+      - server1_data:/db
+      - ./fixtures/server1/.config:/db/.config
+    ports:
+      - "18081:8080"
+
+  server2:
+    <<: *bootstrap-server
+    command: ["server2", "http://server1:8080", "--listen", "0.0.0.0:8080"]
+    volumes:
+      - server2_data:/db
+    ports:
+      - "18082:8080"
+    depends_on:
+      server1:
+        condition: service_healthy
+
+secrets:
+  bootstrap_secret:
+    file: ./secrets/bootstrap-secret.txt
+  signing_key:
+    file: ./secrets/dev-signing-key.pem
+
+volumes:
+  server1_data:
+  server2_data:

@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "command": "create",
+  "collection": "Todos",
+  "id": "todo00000001",
+  "$": "Todos:0",
+  "#": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+  "operationId": "01ARZ3NDEKTSV4RRFFQ69G5FB0"
+}

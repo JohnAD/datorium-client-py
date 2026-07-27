@@ -1,0 +1,10 @@
+{
+  "kind": "object",
+  "children": [
+    {"name": "displayName", "kind": "string", "required": true},
+    {"name": "email", "kind": "string", "required": true},
+    {"name": "todoLists", "kind": "array",
+      "items": {"kind": "string", "format": "DatoriumCachedRef",
+        "custom": {"collections": ["TodoLists"], "summary": ["title"]}}}
+  ]
+}

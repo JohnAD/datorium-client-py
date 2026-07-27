@@ -1,0 +1,10 @@
+{
+  "$": "SearchDefinition:v1",
+  "collection": "Todos",
+  "name": "byStatus",
+  "version": 1,
+  "v1": {
+    "clauses": [{"field": "/status", "op": "equals", "value": "$status"}],
+    "sort": [{"field": "/!", "dir": "asc"}]
+  }
+}

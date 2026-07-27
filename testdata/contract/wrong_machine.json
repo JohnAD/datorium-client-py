@@ -1,0 +1,16 @@
+{
+  "ok": false,
+  "command": "read",
+  "collection": "Todos",
+  "id": "todo00000001",
+  "shardSlot": "7A",
+  "correctServer": "server2",
+  "baseURL": "http://server2:8080",
+  "configVersion": 1,
+  "errors": [
+    {
+      "code": "wrongMachine",
+      "message": "This server is not a SHARD_READ_MEMBER for the target shard; refresh establishment config and retry."
+    }
+  ]
+}

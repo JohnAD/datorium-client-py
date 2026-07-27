@@ -1,0 +1,16 @@
+{
+  "shardMap": {
+    "default": {
+      "00-7F": {
+        "SHARD_SOT_MEMBER": "server1",
+        "SHARD_READ_MEMBER": ["server1"],
+        "PROXY_READ_MEMBER": []
+      },
+      "80-FF": {
+        "SHARD_SOT_MEMBER": "server2",
+        "SHARD_READ_MEMBER": ["server2"],
+        "PROXY_READ_MEMBER": []
+      }
+    }
+  }
+}

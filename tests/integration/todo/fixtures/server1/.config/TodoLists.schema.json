@@ -1,0 +1,9 @@
+{
+  "kind": "object",
+  "children": [
+    {"name": "title", "kind": "string", "required": true},
+    {"name": "owner", "kind": "string", "format": "DatoriumDirectRef", "required": true},
+    {"name": "ownerSummary", "kind": "string", "format": "DatoriumCachedRef",
+      "custom": {"collections": ["Users"], "summary": ["displayName", "email"]}}
+  ]
+}

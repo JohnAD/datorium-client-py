@@ -1,0 +1,10 @@
+{
+  "general": {
+    "name": "DatoriumDB Todo Integration Two Shard",
+    "establishmentServer": "server1",
+    "version": 1,
+    "readMemberCheckinSeconds": 5,
+    "cacheUpdateCheckinSeconds": 5,
+    "readMemberFailedCheckinsBeforeStale": 3
+  }
+}
