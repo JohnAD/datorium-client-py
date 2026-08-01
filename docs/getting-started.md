@@ -21,15 +21,16 @@ client = Client(
         token="YOUR_BEARER_TOKEN",
     )
 )
-client.establish()
 ```
 
 Prefer a context manager so the HTTP client is closed cleanly:
 
 ```python
 with Client(Config(establishment_url="...", token="...")) as client:
-    client.establish()
+    ...
 ```
+
+The client fetches establishment automatically on the first routed operation or typed bind. You do not need to call `establish()` yourself.
 
 ## First document
 

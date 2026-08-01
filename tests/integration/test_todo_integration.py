@@ -222,6 +222,7 @@ def test_todo_compose_scenario() -> None:
     cfg = Config(
         establishment_url=base1,
         token=token,
+        collections=[("Users", 0), ("TodoLists", 0), ("Todos", 0)],
         base_url_rewrite={
             "server1": base1,
             "server2": base2,
@@ -236,7 +237,7 @@ def test_todo_compose_scenario() -> None:
         _wait_ready(client)
 
         _step("ESTABLISH")
-        est = client.establish(("Users", 0), ("TodoLists", 0), ("Todos", 0))
+        est = client.establish()
         assert est.general.version >= 1
         _detail(f"establishment {est.general.name!r} version {est.general.version}")
 
@@ -416,6 +417,7 @@ def test_todo_compose_scenario() -> None:
         )
         assert patched.version, "expected versions.after after raw patch"
         assert patched.version != before_ver
+        assert patched.version_before == before_ver
         todo_rr = client.read("Todos", todo_high, ReadOptions(cache_summaries=True))
         assert todo_rr.sot is not None
         assert todo_rr.sot.get("status") == "done"
@@ -480,6 +482,37 @@ def test_todo_compose_scenario() -> None:
             f"typed CreateDoc/GetDoc/CreatePatchFromChanges/PatchDoc/DeleteDoc on "
             f"Todos/{todo_typed}"
         )
+
+        _step("DOTTED_ID_CRUD")
+        # Qualifying prefix (≥6 chars before '.') shares a shard with related suffixes.
+        dotted_base = _find_id(0x00, 0x7F, user_low, list_low)
+        dotted_id = f"{dotted_base}.settings"
+        assert slot(dotted_id) == slot(dotted_base)
+        client.create(
+            "Todos",
+            dotted_id,
+            OrderedDict(
+                [
+                    ("$", "Todos:0"),
+                    ("title", "Dotted id coverage"),
+                    ("status", "open"),
+                    ("list", list_direct),
+                    ("listSummary", list_cached),
+                ]
+            ),
+        )
+        dotted_rr = client.read("Todos", dotted_id)
+        assert dotted_rr.sot is not None
+        assert dotted_rr.sot.get("title") == "Dotted id coverage"
+        client.delete(
+            "Todos",
+            dotted_id,
+            {"$": str(dotted_rr.sot["$"]), "#": str(dotted_rr.sot["#"])},
+        )
+        with pytest.raises(AppError) as exc_info:
+            client.read("Todos", dotted_id)
+        assert is_app_code(exc_info.value, CODE_DOCUMENT_NOT_FOUND)
+        _detail(f"raw Create/Read/Delete Todos/{dotted_id} (shared slot {slot_hex(dotted_id)})")
 
         _step("PASSED")
         _detail("todo-integration PASSED")

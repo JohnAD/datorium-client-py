@@ -51,7 +51,13 @@ def test_wrong_machine_fixture() -> None:
     assert res.ok is False
     err = app_error_from_result(res)
     assert err.code == CODE_WRONG_MACHINE
-    assert err.correct_server or err.base_url
+    # v0.0.5+ wrongMachine envelopes omit routing hints; configVersion is diagnostic.
+    assert err.correct_server == ""
+    assert err.base_url == ""
+    assert err.shard_slot == ""
+    assert err.config_version == 1
+    assert err.collection == "Movies"
+    assert err.id == "fixedid007"
 
 
 @pytest.mark.contract

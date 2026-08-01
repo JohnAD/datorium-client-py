@@ -125,14 +125,21 @@ class AsyncClient:
         return await self._get(self.cfg.establishment_url, f"{API_PREFIX}/ready", auth=False)
 
     async def establish(self, *collections: tuple[str, int]) -> Establishment:
+        """Fetch and cache establishment. Usually unnecessary: the client
+        establishes automatically on first use / context-manager enter.
+
+        Pass ``(collection, schema_version)`` pairs to validate a catalog, or
+        call with no args to refresh the cache.
+        """
         res = await self._get(
             self.cfg.establishment_url, f"{API_PREFIX}/establish", auth=True
         )
         if not res.ok:
             raise app_error_from_result(res)
         est = parse_establishment(res)
-        if collections:
-            validate_catalog(est, list(collections))
+        catalog = list(collections) if collections else list(self.cfg.collections)
+        if catalog:
+            validate_catalog(est, catalog)
         self._cache.set(est)
         return est
 
@@ -329,9 +336,9 @@ class AsyncClient:
 
         On wrongMachine: always re-fetch establishment from the establishment
         server, then recompute the next hop from that fresh document. Bounce
-        fields such as correctServer, baseURL, and configVersion are ignored
-        for routing (configVersion on a non-establishment server is diagnostic
-        only and not authoritative).
+        fields such as correctServer and baseURL are ignored for routing.
+        configVersion on a bounce is diagnostic only (what that server thinks)
+        and must not skip the establishment refresh.
         """
         tried: set[str] = set()
         last_err: AppError | None = None
@@ -361,7 +368,7 @@ class AsyncClient:
     async def _ensure_established(self) -> Establishment:
         est = self._cache.get()
         if est is None:
-            est = await self.establish()
+            est = await self.establish(*self.cfg.collections)
         return est
 
     def _rewrite(self, server_name: str, base_url: str) -> str:

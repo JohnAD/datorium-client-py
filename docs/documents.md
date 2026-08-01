@@ -19,7 +19,7 @@ Creates a new document on the shard’s source of truth.
 
 | Parameter | Type | What to pass |
 | --- | --- | --- |
-| `collection` | `str` | Collection name from the server catalog (for example `"Todos"`). Must match a collection you established against. |
+| `collection` | `str` | Collection name from the server catalog (for example `"Todos"`). |
 | `doc_id` | `str` | Stable document id. Pass `""` to let the client mint a ULID. Prefer an explicit id when your app already has one. |
 | `content` | `dict[str, Any]` | Document body. **Must** include `$` with the schema marker. Include application fields in schema order when possible (`OrderedDict` recommended). Do **not** set `#` on create (the server assigns versions). `operationId` is optional. |
 
@@ -139,7 +139,8 @@ Successful creates, patches, and deletes return a `WriteResult`:
 | --- | --- |
 | `id` | Document id |
 | `schema` | Schema marker (`$`) |
-| `version` | Version after the write (`#`) |
+| `version` | Version after the write (`#`, or `versions.after` on patch) |
+| `version_before` | Previous version on patch (`versions.before`); empty for create/delete |
 | `operation_id` | Operation id used for the write |
 | `note` | Optional replication note when some members have not acknowledged yet |
 

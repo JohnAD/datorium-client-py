@@ -30,7 +30,8 @@ todos = Collection.of(Todo, "Todos", 0).bind(client)
 | Piece | What to pass |
 | --- | --- |
 | `Collection.of(model_type, name, version)` | Your model class, catalog collection name, and schema version integer (marker becomes `{name}:{version}`). |
-| `.bind(client)` | An established `Client`. Checks that the model shape matches the server schema before returning a `CollectionClient`. |
+| `.bind(client)` | A sync `Client`. Establishes if needed, then checks that the model shape matches the server schema. |
+| `await .bind_async(client)` | An `AsyncClient`. Same checks as `.bind`. |
 
 Binding compares names, order, nested kinds, arrays, requiredness, and nullability. Mismatches raise before any write is attempted.
 

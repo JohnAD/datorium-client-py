@@ -8,7 +8,6 @@
 from datorium_client import AsyncClient, Config
 
 async with AsyncClient(Config(establishment_url="...", token="...")) as client:
-    await client.establish()
     await client.health()
 ```
 
@@ -18,6 +17,7 @@ async with AsyncClient(Config(establishment_url="...", token="...")) as client:
 |-------|---------|
 | `establishment_url` | Base URL of the establishment server (required) |
 | `token` / `token_source` | Bearer token (one required) |
+| `collections` | Optional `[(name, schema_version), ...]` catalog check applied on the first automatic establish |
 | `base_url_rewrite` | Map Docker-internal URLs or server names to host-reachable URLs |
 | `wrong_machine_retries` | Bound for routing bounce loops (default 3) |
 | `transport_retries` | Retries on transport failures (default 0) |
@@ -43,7 +43,7 @@ This is independent of `wrongMachine` handling (which always re-fetches establis
 
 ## Establishment
 
-Call `establish()` (optionally with `(collection, schema_version)` pairs) before typed binding, or let the first routed operation fetch it automatically. The client caches the establishment document.
+Establishment is automatic: the first routed operation, `bind`, or `await bind_async` fetches and caches the establishment document. Set `Config.collections` (or call `establish(...)` with `(collection, schema_version)` pairs) when you want an early catalog check; call `establish()` with no args to force a refresh.
 
 On `wrongMachine`, the client **always** re-fetches establishment from the establishment server before choosing another hop. A `configVersion` on a bounce is only diagnostic (what that refusing server thinks); it is not authoritative.
 

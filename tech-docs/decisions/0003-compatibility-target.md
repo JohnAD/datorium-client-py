@@ -6,11 +6,11 @@ Accepted
 
 ## Context
 
-The Go client documents DatoriumDB v0.0.2 while the database repo has advanced (v0.0.4). Some server behaviors (replication `note`, read staleness) are underrepresented in the Go client.
+The Go client historically documented older DatoriumDB tags while the database repo advanced. Some server behaviors (replication `note`, read staleness, hint-free `wrongMachine`) need an explicit client target.
 
 ## Decision
 
-Target DatoriumDB **v0.0.4 only** for the first release. Use the Go client as the ergonomic/API baseline, but prefer the current server contract when they differ. Surface replication notes as structured optional write-result fields. Make stale-read failover configurable.
+Target DatoriumDB **v0.0.5** for this release line. Use the Go client as the ergonomic/API baseline, but prefer the current server contract when they differ. Surface replication notes as structured optional write-result fields. Make stale-read failover configurable.
 
 ## Consequences
 

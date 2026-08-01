@@ -111,8 +111,9 @@ fi
 export DATORIUMDB_SRC
 mkdir -p "${ANALYSIS_ROOT}"
 detail "DATORIUMDB_SRC=${DATORIUMDB_SRC}"
+detail "expected DatoriumDB v0.0.5+"
 if command -v git >/dev/null && [[ -d "${DATORIUMDB_SRC}/.git" ]]; then
-  detail "datoriumdb $(git -C "${DATORIUMDB_SRC}" rev-parse --short HEAD) ($(git -C "${DATORIUMDB_SRC}" branch --show-current 2>/dev/null || echo detached))"
+  detail "datoriumdb $(git -C "${DATORIUMDB_SRC}" rev-parse --short HEAD) ($(git -C "${DATORIUMDB_SRC}" describe --tags --always 2>/dev/null || echo untagged))"
 fi
 detail "compose project=${PROJECT}"
 detail "python=${PYTHON}"
@@ -151,6 +152,7 @@ export DATORIUM_SERVER2_URL="${SERVER2_URL}"
 # -s so [STEP] prints from the scenario are visible.
 (cd "${ROOT}" && "${PYTHON}" -m pytest \
   tests/integration/test_todo_integration.py \
+  tests/integration/test_todo_async_integration.py \
   -m integration \
   -s \
   --tb=short)

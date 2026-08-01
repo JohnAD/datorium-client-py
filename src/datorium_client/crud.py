@@ -45,6 +45,7 @@ class WriteResult:
     id: str = ""
     schema: str = ""
     version: str = ""
+    version_before: str = ""
     operation_id: str = ""
     note: ReplicationNote | None = None
 
@@ -96,6 +97,11 @@ def write_result_from_envelope(res: Result, *, collection: str = "", doc_id: str
     )
     versions = res.value_field("versions")
     if isinstance(versions, JSONObject):
+        before = versions.get("before")
+        if isinstance(before, JSONString):
+            wr.version_before = before.value
+        elif isinstance(before, JSONNumber):
+            wr.version_before = before.text
         after = versions.get("after")
         if isinstance(after, JSONString):
             wr.version = after.value

@@ -2,7 +2,7 @@
 
 Pure Python smart client for [DatoriumDB](https://github.com/JohnAD/datoriumdb).
 
-Targets DatoriumDB **v0.0.4** (`/datoriumdb/v1`).
+Targets DatoriumDB **v0.0.5** (`/datoriumdb/v1`).
 
 ## Install
 
@@ -20,7 +20,6 @@ Requires Python 3.11+.
 from datorium_client import Client, Config
 
 with Client(Config(establishment_url="http://localhost:8080", token=TOKEN)) as client:
-    client.establish()
     client.create("Todos", "", {"$": "Todos:0", "title": "Buy milk", "status": "open"})
 ```
 

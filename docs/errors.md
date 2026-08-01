@@ -25,6 +25,10 @@ except AppError as err:
 
 HTTP 404, 502, connection failures, and unreadable bodies raise `TransportError`. These usually mean the client used the wrong URL, the server is down, or a proxy failed—not that a document is missing.
 
+## `wrongMachine`
+
+A command sent to the wrong member returns `ok: false` with code `wrongMachine`. Current servers may include diagnostic `configVersion` but do **not** steer the client with `correctServer` / `baseURL` / `shardSlot`. The client always re-fetches establishment and recomputes the route locally (bounded retries).
+
 ## Retries
 
 The client may retry `wrongMachine` routing, optional transport failures, create verification after ambiguous transport errors, and one version-mismatch rebuild for `patch_with_version_retry`. Retries do not replace server-side integrity checks.

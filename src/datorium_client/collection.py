@@ -130,10 +130,10 @@ class Collection(Generic[T]):
         check_model_schema_compatible(self.model_type, compiled)
         return CollectionClient(self, client, compiled, binding=object())
 
-    def bind_async(self, client: AsyncClient) -> AsyncCollectionClient[T]:
+    async def bind_async(self, client: AsyncClient) -> AsyncCollectionClient[T]:
         est = client.cached_establishment()
         if est is None:
-            raise ValueError("call await client.establish(...) before bind_async")
+            est = await client.establish((self.name, self.version))
         entry = est.schemas.get(self.name)
         if entry is None:
             raise ValueError(f"collection {self.name!r} not in establishment schemas")

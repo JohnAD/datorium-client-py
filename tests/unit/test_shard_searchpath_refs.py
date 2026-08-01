@@ -8,7 +8,14 @@ from datorium_client import refs, searchpath, shard
 
 
 def test_sharding_prefix_ignores_early_periods() -> None:
+    # Periods in the first six positions do not split the prefix.
+    assert shard.slot("ab.c.de") == shard.raw_slot("ab.c.de")
+    # A period at or after index 6 splits: prefix is before that period.
     assert shard.slot("abcdef.rest") == shard.raw_slot("abcdef")
+    # Related suffixes after the same qualifying prefix share a slot.
+    base = "01TESTMOVIES00000000000001"
+    assert shard.slot(base) == shard.slot(f"{base}.settings")
+    assert shard.slot(f"{base}.settings") == shard.slot(f"{base}.mailbox")
 
 
 def test_range_coverage() -> None:

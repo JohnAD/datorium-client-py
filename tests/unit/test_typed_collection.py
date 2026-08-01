@@ -72,7 +72,7 @@ def test_bind_pydantic_and_create() -> None:
 
     http = httpx.Client(transport=httpx.MockTransport(handler))
     client = Client(Config(establishment_url="http://a.test", token="t", http_client=http))
-    client.establish(("Todos", 0))
+    # bind auto-establishes; no explicit client.establish() required
     col = Collection.of(TodoModel, "Todos", 0).bind(client)
     wr = col.create_doc(TodoModel(title="Buy milk", status="open"), doc_id="todo1")
     assert wr.version == "ver1"
@@ -85,7 +85,6 @@ def test_bind_dataclass() -> None:
 
     http = httpx.Client(transport=httpx.MockTransport(handler))
     client = Client(Config(establishment_url="http://a.test", token="t", http_client=http))
-    client.establish(("Todos", 0))
     Collection.of(TodoDC, "Todos", 0).bind(client)
 
 

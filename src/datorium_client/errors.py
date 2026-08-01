@@ -25,15 +25,23 @@ CATALOG_SCHEMA_VERSION_MISMATCH = "schemaVersionMismatch"
 
 @dataclass
 class AppError(Exception):
-    """Logical / business failure from an HTTP 200 envelope with ok:false."""
+    """Logical / business failure from an HTTP 200 envelope with ok:false.
+
+    On ``wrongMachine``, ``config_version`` is diagnostic only (what the refusing
+    server believes). ``shard_slot``, ``correct_server``, and ``base_url`` are
+    deprecated parse-only fields for older envelopes; current servers omit them
+    and clients must re-establish and recompute the next hop locally.
+    """
 
     code: str
     message: str = ""
     errors: list[Any] = field(default_factory=list)
     result: Any = None
+    # Deprecated bounce hint fields (older servers only; never used for routing).
     shard_slot: str = ""
     correct_server: str = ""
     base_url: str = ""
+    # Diagnostic only on wrongMachine — not authoritative establishment version.
     config_version: int = 0
     collection: str = ""
     id: str = ""
